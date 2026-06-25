@@ -1,0 +1,222 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0A241C;
+  --color-secondary: #C5A880;
+  --color-background: #FAF8F5;
+  --color-surface: #FAF8F5;
+  --color-on-surface: #1E2321;
+  --color-on-surface-variant: #606662;
+  --color-primary-container: #153C30;
+  --color-on-primary: #FAF8F5;
+  --color-primary-fixed: #0A241C;
+  --color-secondary-fixed: #C5A880;
+  --color-surface-container: #F0EDE6;
+  --color-surface-container-low: #F6F3EC;
+  --color-surface-container-highest: #E8E4DB;
+  --color-on-primary-container: #FAF8F5;
+  --color-tertiary-container: #FAF8F5;
+  --color-on-tertiary-container: #0A241C;
+
+  --font-display-lg: 'Playfair Display', serif;
+  --font-body-md: 'Hanken Grotesk', sans-serif;
+  --font-body-lg: 'Hanken Grotesk', sans-serif;
+  --font-label-caps: 'Hanken Grotesk', sans-serif;
+
+  --max-width-container-max: 1440px;
+
+  --spacing-margin-desktop: 5rem;
+  --spacing-margin-mobile: 1.5rem;
+  --spacing-unit: 1rem;
+  --spacing-gutter: 2rem;
+}
+
+@utility font-display-lg {
+  font-family: var(--font-display-lg);
+}
+@utility font-body-md {
+  font-family: var(--font-body-md);
+}
+@utility font-body-lg {
+  font-family: var(--font-body-lg);
+}
+@utility font-label-caps {
+  font-family: var(--font-label-caps);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@utility text-display-lg {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+}
+@utility text-display-lg-mobile {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  line-height: 1.2;
+}
+@utility text-headline-md {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+@utility text-headline-sm {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+}
+@utility text-body-lg {
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.6;
+}
+@utility text-body-md {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+@utility text-label-caps {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+@utility glass-effect {
+  background: rgba(250, 248, 245, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+@utility glass-panel {
+  background: rgba(250, 248, 245, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+}
+@utility glass-container {
+  background: rgba(250, 248, 245, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+}
+@utility glass-card {
+  background: rgba(250, 248, 245, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+}
+@utility gold-border {
+  border: 1px solid rgba(197, 168, 128, 0.4);
+}
+@utility gold-thread-border {
+  border: 1.5px solid rgba(197, 168, 128, 0.65);
+}
+@utility gold-text {
+  color: var(--color-secondary);
+}
+@utility input-luxe {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.4);
+  outline: none;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-bottom-color: var(--color-secondary);
+    box-shadow: none;
+  }
+}
+
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@utility progress-shimmer {
+  background: linear-gradient(90deg, var(--color-secondary) 25%, #e6d5bd 50%, var(--color-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+@utility gold-shimmer {
+  background: linear-gradient(90deg, var(--color-secondary) 25%, #ffffff 50%, var(--color-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@utility fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility sidebar-active {
+  background-color: var(--color-primary-container);
+  color: var(--color-secondary-fixed);
+  border-left: 4px solid var(--color-secondary);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(197, 168, 128, 0.3);
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 168, 128, 0.5);
+}
+
+/* Cinematic Upgrades */
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-rise {
+  animation: rise 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ambientSlow {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-1%, -1%);
+  }
+}
+
+@utility ambient-hero {
+  animation: ambientSlow 25s ease-in-out infinite alternate;
+}
+
+@utility shimmer-primary {
+  background: linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary) 40%, var(--color-primary-container) 50%, var(--color-primary) 60%, var(--color-primary) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 5s infinite linear;
+  transition: all 0.5s ease;
+  &:hover {
+    background-size: 250% 100%;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.reveal.reveal-active {
+  opacity: 1;
+  transform: translateY(0);
+}

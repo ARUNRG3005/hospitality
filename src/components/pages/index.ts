@@ -1,0 +1,9 @@
+export { default as HomePage } from "./HomePage";
+export { default as AboutPage } from "./AboutPage";
+export { default as AuthPage } from "./AuthPage";
+export { default as BookingPage } from "./BookingPage";
+export { default as ContactPage } from "./ContactPage";
+export { default as DashboardPage } from "./DashboardPage";
+export { default as ExperiencePage } from "./ExperiencePage";
+export { default as ServicesPage } from "./ServicesPage";
+export { default as TreatmentsPage } from "./TreatmentsPage";
