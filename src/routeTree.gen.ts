@@ -18,6 +18,7 @@ import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesDeptIdServiceIdRouteImport } from './routes/services.$deptId.$serviceId'
 
 const TreatmentsRoute = TreatmentsRouteImport.update({
   id: '/treatments',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesDeptIdServiceIdRoute = ServicesDeptIdServiceIdRouteImport.update({
+  id: '/$deptId/$serviceId',
+  path: '/$deptId/$serviceId',
+  getParentRoute: () => ServicesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,8 +79,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/experience': typeof ExperienceRoute
-  '/services': typeof ServicesRoute
+  '/services': typeof ServicesRouteWithChildren
   '/treatments': typeof TreatmentsRoute
+  '/services/$deptId/$serviceId': typeof ServicesDeptIdServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,8 +91,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/experience': typeof ExperienceRoute
-  '/services': typeof ServicesRoute
+  '/services': typeof ServicesRouteWithChildren
   '/treatments': typeof TreatmentsRoute
+  '/services/$deptId/$serviceId': typeof ServicesDeptIdServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,8 +104,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/experience': typeof ExperienceRoute
-  '/services': typeof ServicesRoute
+  '/services': typeof ServicesRouteWithChildren
   '/treatments': typeof TreatmentsRoute
+  '/services/$deptId/$serviceId': typeof ServicesDeptIdServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/experience'
     | '/services'
     | '/treatments'
+    | '/services/$deptId/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/experience'
     | '/services'
     | '/treatments'
+    | '/services/$deptId/$serviceId'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/experience'
     | '/services'
     | '/treatments'
+    | '/services/$deptId/$serviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -143,7 +155,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ExperienceRoute: typeof ExperienceRoute
-  ServicesRoute: typeof ServicesRoute
+  ServicesRoute: typeof ServicesRouteWithChildren
   TreatmentsRoute: typeof TreatmentsRoute
 }
 
@@ -212,8 +224,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/$deptId/$serviceId': {
+      id: '/services/$deptId/$serviceId'
+      path: '/$deptId/$serviceId'
+      fullPath: '/services/$deptId/$serviceId'
+      preLoaderRoute: typeof ServicesDeptIdServiceIdRouteImport
+      parentRoute: typeof ServicesRoute
+    }
   }
 }
+
+interface ServicesRouteChildren {
+  ServicesDeptIdServiceIdRoute: typeof ServicesDeptIdServiceIdRoute
+}
+
+const ServicesRouteChildren: ServicesRouteChildren = {
+  ServicesDeptIdServiceIdRoute: ServicesDeptIdServiceIdRoute,
+}
+
+const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
+  ServicesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -223,7 +254,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ExperienceRoute: ExperienceRoute,
-  ServicesRoute: ServicesRoute,
+  ServicesRoute: ServicesRouteWithChildren,
   TreatmentsRoute: TreatmentsRoute,
 }
 export const routeTree = rootRouteImport

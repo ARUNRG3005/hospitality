@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { hospitalDb } from "../../data/hospitalDb";
 
 interface HeaderProps {
   variant?: "light" | "dark";
@@ -9,6 +10,8 @@ export default function Header({ variant = "light" }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const [isScrolled, setIsScrolled] = React.useState(false);
+
+  const departments = React.useMemo(() => hospitalDb.getDepartments(), []);
 
   React.useEffect(() => {
     // Session state
@@ -80,13 +83,48 @@ export default function Header({ variant = "light" }: HeaderProps) {
           >
             Departments
           </Link>
-          <Link
-            to="/services"
-            activeProps={{ className: activeLinkClass }}
-            inactiveProps={{ className: inactiveLinkClass }}
-          >
-            Services
-          </Link>
+          
+          {/* Services Menu with Mega Dropdown */}
+          <div className="relative group/nav-item py-2">
+            <Link
+              to="/services"
+              activeProps={{ className: activeLinkClass }}
+              inactiveProps={{ className: inactiveLinkClass }}
+              className="flex items-center gap-1"
+            >
+              Services
+              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover/nav-item:rotate-180">
+                keyboard_arrow_down
+              </span>
+            </Link>
+            
+            {/* Mega Dropdown menu fetched from single source database */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] bg-background/95 dark:bg-[#0c3325]/95 shadow-[0_15px_40px_rgba(0,0,0,0.15)] border border-[#cda052]/30 rounded-2xl p-6 opacity-0 translate-y-2 pointer-events-none group-hover/nav-item:opacity-100 group-hover/nav-item:translate-y-0 group-hover/nav-item:pointer-events-auto transition-all duration-300 z-50 backdrop-blur-xl">
+              <div className="grid grid-cols-3 gap-4">
+                {departments.map((dept) => (
+                  <div key={dept.id} className="space-y-2">
+                    <div className="font-label-caps text-[10px] tracking-wider text-[#cda052] font-bold flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[13px]">{dept.icon}</span>
+                      {dept.name}
+                    </div>
+                    <ul className="space-y-1">
+                      {dept.services.slice(0, 4).map((service) => (
+                        <li key={service.id}>
+                          <Link
+                            to="/booking"
+                            className="text-[11px] text-on-surface-variant dark:text-white/70 hover:text-primary dark:hover:text-[#cda052] transition-colors block py-0.5 truncate hover:pl-1 transition-all"
+                          >
+                            {service.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <Link
             to="/about"
             activeProps={{ className: activeLinkClass }}
@@ -164,18 +202,18 @@ export default function Header({ variant = "light" }: HeaderProps) {
 
       {/* Mobile Navigation Drawer */}
       {isMenuOpen && (
-        <div className="fixed inset-0 w-screen h-screen bg-background/98 dark:bg-primary/98 backdrop-blur-3xl z-40 flex flex-col justify-center p-12 space-y-10 animate-fade-in md:hidden border-b-2 border-[#cda052]/20">
+        <div className="fixed inset-0 w-screen h-screen bg-background/98 dark:bg-primary/98 backdrop-blur-3xl z-40 flex flex-col justify-start pt-24 px-8 pb-8 space-y-8 overflow-y-auto md:hidden border-b-2 border-[#cda052]/20">
           
           {/* Logo in Drawer */}
-          <div className="text-center animate-float">
-            <span className="text-[#cda052] text-4xl block mb-2 font-serif">✥</span>
-            <span className="font-display-lg text-headline-md tracking-wider text-primary dark:text-white">
+          <div className="text-center animate-float py-2">
+            <span className="text-[#cda052] text-3xl block mb-1 font-serif">✥</span>
+            <span className="font-display-lg text-headline-sm tracking-wider text-primary dark:text-white">
               MediCore
             </span>
           </div>
 
-          {/* Links with staggered delay */}
-          <div className="flex flex-col space-y-6 text-center text-xl">
+          {/* Core Links */}
+          <div className="flex flex-col space-y-4 text-center text-lg">
             <Link
               to="/treatments"
               onClick={() => setIsMenuOpen(false)}
@@ -192,6 +230,38 @@ export default function Header({ variant = "light" }: HeaderProps) {
             >
               Services
             </Link>
+          </div>
+
+          {/* Staggered dynamic directories mapping departments/subservices */}
+          <div className="bg-[#cda052]/5 dark:bg-white/5 border border-[#cda052]/20 rounded-xl p-4 space-y-4 text-left">
+            <span className="font-label-caps text-[9px] tracking-widest text-[#cda052] block border-b border-[#cda052]/20 pb-1 font-bold">
+              Dynamic Services Directory
+            </span>
+            <div className="space-y-3 max-h-[160px] overflow-y-auto custom-scrollbar">
+              {departments.map((dept) => (
+                <div key={dept.id} className="space-y-1">
+                  <div className="text-[11px] font-bold text-primary dark:text-[#cda052] flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[13px]">{dept.icon}</span>
+                    {dept.name}
+                  </div>
+                  <div className="pl-4 flex flex-col space-y-1">
+                    {dept.services.slice(0, 3).map((service) => (
+                      <Link
+                        key={service.id}
+                        to="/booking"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-[10px] text-on-surface-variant dark:text-white/60 hover:text-[#cda052] truncate"
+                      >
+                        • {service.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-4 text-center">
             <Link
               to="/about"
               onClick={() => setIsMenuOpen(false)}
@@ -213,7 +283,7 @@ export default function Header({ variant = "light" }: HeaderProps) {
           <div className="h-px bg-[#cda052]/20 w-full" />
 
           {/* Drawer Actions */}
-          <div className="flex flex-col space-y-4 pt-4">
+          <div className="flex flex-col space-y-4 pt-2">
             {currentUser ? (
               <>
                 <div className="text-center font-body-md text-on-surface-variant text-sm">
@@ -222,7 +292,7 @@ export default function Header({ variant = "light" }: HeaderProps) {
                 <Link
                   to="/dashboard"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full text-center py-4 bg-primary text-on-primary border border-[#cda052]/30 rounded-full font-label-caps text-label-caps hover:bg-primary-container transition-all"
+                  className="w-full text-center py-3 bg-primary text-on-primary border border-[#cda052]/30 rounded-full font-label-caps text-label-caps hover:bg-primary-container transition-all"
                 >
                   My Profile
                 </Link>
@@ -231,7 +301,7 @@ export default function Header({ variant = "light" }: HeaderProps) {
                     setIsMenuOpen(false);
                     handleSignOut();
                   }}
-                  className="w-full text-center py-4 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-full font-label-caps text-label-caps transition-colors cursor-pointer"
+                  className="w-full text-center py-3 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-full font-label-caps text-label-caps transition-colors cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -242,7 +312,7 @@ export default function Header({ variant = "light" }: HeaderProps) {
                   to="/auth"
                   search={{ mode: "login" }}
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full text-center py-3 font-label-caps text-label-caps border border-[#cda052]/30 text-secondary hover:bg-secondary/10 transition-colors rounded-full"
+                  className="w-full text-center py-2.5 font-label-caps text-label-caps border border-[#cda052]/30 text-[#cda052] hover:bg-[#cda052]/10 transition-colors rounded-full"
                 >
                   Sign In
                 </Link>
@@ -250,7 +320,7 @@ export default function Header({ variant = "light" }: HeaderProps) {
                   to="/auth"
                   search={{ mode: "signup" }}
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full text-center py-3 border border-[#cda052]/30 rounded-full font-label-caps text-label-caps transition-all shimmer-gold text-primary hover:text-primary-container"
+                  className="w-full text-center py-2.5 border border-[#cda052]/30 rounded-full font-label-caps text-label-caps transition-all shimmer-gold text-primary hover:text-primary-container"
                 >
                   Sign Up
                 </Link>
