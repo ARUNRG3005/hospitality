@@ -3,7 +3,7 @@ import { BookingPage } from "@/components/pages";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
-    meta: [{ title: "Booking · LuxeBook" }],
+    meta: [{ title: "Book Appointment · MediCore Hospital" }],
   }),
   component: BookingPage,
 });

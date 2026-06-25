@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0A241C;
-  --color-secondary: #C5A880;
-  --color-background: #FAF8F5;
-  --color-surface: #FAF8F5;
-  --color-on-surface: #1E2321;
-  --color-on-surface-variant: #606662;
-  --color-primary-container: #153C30;
-  --color-on-primary: #FAF8F5;
-  --color-primary-fixed: #0A241C;
-  --color-secondary-fixed: #C5A880;
-  --color-surface-container: #F0EDE6;
-  --color-surface-container-low: #F6F3EC;
-  --color-surface-container-highest: #E8E4DB;
-  --color-on-primary-container: #FAF8F5;
-  --color-tertiary-container: #FAF8F5;
-  --color-on-tertiary-container: #0A241C;
+  --color-primary: #061d15;
+  --color-secondary: #cda052;
+  --color-background: #faf8f5;
+  --color-surface: #faf8f5;
+  --color-on-surface: #121815;
+  --color-on-surface-variant: #525a56;
+  --color-primary-container: #0c3325;
+  --color-on-primary: #faf8f5;
+  --color-primary-fixed: #061d15;
+  --color-secondary-fixed: #cda052;
+  --color-surface-container: #f1ede5;
+  --color-surface-container-low: #f7f3eb;
+  --color-surface-container-highest: #e9e4db;
+  --color-on-primary-container: #faf8f5;
+  --color-tertiary-container: #faf8f5;
+  --color-on-tertiary-container: #061d15;
 
-  --font-display-lg: 'Playfair Display', serif;
-  --font-body-md: 'Hanken Grotesk', sans-serif;
-  --font-body-lg: 'Hanken Grotesk', sans-serif;
-  --font-label-caps: 'Hanken Grotesk', sans-serif;
+  --font-display-lg: "Playfair Display", serif;
+  --font-body-md: "Hanken Grotesk", sans-serif;
+  --font-body-lg: "Hanken Grotesk", sans-serif;
+  --font-label-caps: "Hanken Grotesk", sans-serif;
 
   --max-width-container-max: 1440px;
 
@@ -126,18 +126,31 @@
   }
 }
 
-
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 @utility progress-shimmer {
-  background: linear-gradient(90deg, var(--color-secondary) 25%, #e6d5bd 50%, var(--color-secondary) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary) 25%,
+    #e6d5bd 50%,
+    var(--color-secondary) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }
 @utility gold-shimmer {
-  background: linear-gradient(90deg, var(--color-secondary) 25%, #ffffff 50%, var(--color-secondary) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary) 25%,
+    #ffffff 50%,
+    var(--color-secondary) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }
@@ -146,8 +159,14 @@
   animation: fadeIn 0.5s ease-out forwards;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @utility sidebar-active {
@@ -187,7 +206,8 @@
 }
 
 @keyframes ambientSlow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1) translate(0, 0);
   }
   50% {
@@ -200,7 +220,14 @@
 }
 
 @utility shimmer-primary {
-  background: linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary) 40%, var(--color-primary-container) 50%, var(--color-primary) 60%, var(--color-primary) 100%);
+  background: linear-gradient(
+    120deg,
+    var(--color-primary) 0%,
+    var(--color-primary) 40%,
+    var(--color-primary-container) 50%,
+    var(--color-primary) 60%,
+    var(--color-primary) 100%
+  );
   background-size: 200% 100%;
   animation: shimmer 5s infinite linear;
   transition: all 0.5s ease;
@@ -209,10 +236,51 @@
   }
 }
 
+/* Custom premium hover and nav utilities */
+@utility gold-gradient-text {
+  background: linear-gradient(135deg, #cda052 0%, #fce9c8 50%, #a17835 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    #cda052 0%,
+    #fce9c8 25%,
+    #cda052 50%,
+    #fce9c8 75%,
+    #a17835 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 4s infinite linear;
+  transition: all 0.4s ease;
+  &:hover {
+    background-position: right center;
+    box-shadow: 0 8px 24px rgba(205, 160, 82, 0.25);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Scroll reveal styles */
 .reveal {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
 }
 
@@ -220,3 +288,4 @@
   opacity: 1;
   transform: translateY(0);
 }
+

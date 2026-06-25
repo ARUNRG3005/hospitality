@@ -9,7 +9,7 @@ const authSearchSchema = z.object({
 export const Route = createFileRoute("/auth")({
   validateSearch: (search) => authSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Auth · LuxeBook" }],
+    meta: [{ title: "Patient Portal · MediCore Hospital" }],
   }),
   component: AuthPage,
 });

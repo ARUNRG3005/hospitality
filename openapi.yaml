@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: MediCore Luxury Services API
+  description: |
+    API specifications for MediCore's luxury patient services, including:
+    - **Medical Concierge**: VIP request creation and VIP preference profiles.
+    - **VIP Suites and ICU Pods**: Luxury room cataloging and room booking.
+  version: 1.0.0
+servers:
+  - url: https://api.medicore-vip.com/v1
+    description: Production Server (VIP Gateway)
+  - url: http://localhost:3000/v1
+    description: Local Development Server
+
+paths:
+  /concierge/requests:
+    post:
+      tags:
+        - Medical Concierge
+      summary: Create a concierge request
+      description: Initiates a new service, transport, billing, or hospitality request for a VIP patient.
+      operationId: createConciergeRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConciergeRequest'
+      responses:
+        '201':
+          description: Request created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConciergeRequestResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /patients/{id}/preferences:
+    get:
+      tags:
+        - Medical Concierge
+      summary: Fetch VIP preferences
+      description: Returns the patient's VIP profile, including tier, amenity preferences, language, and private contact info.
+      operationId: getPatientPreferences
+      parameters:
+        - name: id
+          in: path
+          description: Patient ID from the EHR system.
+          required: true
+          schema:
+            type: string
+            example: P123
+      responses:
+        '200':
+          description: VIP profile retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VIPProfile'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  /rooms:
+    get:
+      tags:
+        - VIP Suites and ICU Pods
+      summary: List rooms
+      description: Returns room inventory filtered by room type (e.g., vip).
+      operationId: listRooms
+      parameters:
+        - name: type
+          in: query
+          description: Filter rooms by room type.
+          required: false
+          schema:
+            type: string
+            example: vip
+        - name: status
+          in: query
+          description: Filter rooms by occupancy/housekeeping status.
+          required: false
+          schema:
+            type: string
+            enum: [available, occupied, cleaning, maintenance, clinical_hold]
+            example: available
+      responses:
+        '200':
+          description: List of rooms.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+
+  /rooms/book:
+    post:
+      tags:
+        - VIP Suites and ICU Pods
+      summary: Book a VIP Room
+      description: Creates a room booking for a VIP patient and reserves selected luxury services.
+      operationId: bookRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRoomRequest'
+      responses:
+        '201':
+          description: Booking created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '409':
+          description: Room is already booked during this period.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-VIP-Token
+      description: Secure token used for authentication of VIP patient widgets.
+  
+  responses:
+    400BadRequest:
+      description: Invalid request parameters or request payload validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    401Unauthorized:
+      description: API token is missing, expired, or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    403Forbidden:
+      description: User does not have the required permissions/RBAC role to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    404NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    CreateConciergeRequest:
+      type: object
+      required:
+        - patient_id
+        - type
+        - details
+        - priority
+      properties:
+        patient_id:
+          type: string
+          description: EHR patient ID code.
+          example: P123
+        type:
+          type: string
+          enum: [transport, catering, billing, scheduling, lodging, personal_request]
+          example: transport
+        details:
+          type: string
+          description: Detailed description of the service requested.
+          example: Airport pickup from IGIA (New Delhi) at 09:00 AM on 2026-07-01 in Mercedes S-Class.
+        priority:
+          type: string
+          enum: [low, medium, high, emergency]
+          example: high
+
+    ConciergeRequestResponse:
+      type: object
+      properties:
+        request_id:
+          type: string
+          example: C456
+        eta:
+          type: string
+          format: date-time
+          example: "2026-07-01T09:00:00Z"
+        status:
+          type: string
+          example: pending
+
+    VIPProfile:
+      type: object
+      properties:
+        patient_id:
+          type: string
+          example: P123
+        tier:
+          type: string
+          enum: [platinum, gold, silver]
+          example: platinum
+        preferences:
+          type: object
+          properties:
+            dietary:
+              type: array
+              items:
+                type: string
+              example: ["gluten-free", "low-sodium"]
+            pillow_type:
+              type: string
+              example: memory-foam
+            newspaper:
+              type: string
+              example: Economic Times
+            visiting_hours_restriction:
+              type: boolean
+              example: true
+        language:
+          type: string
+          example: English
+        private_contact:
+          type: string
+          description: Encrypted direct contact phone number.
+          example: "+91-99999-88888"
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+          example: R101
+        type:
+          type: string
+          example: vip
+        status:
+          type: string
+          enum: [available, occupied, cleaning, maintenance, clinical_hold]
+          example: available
+        amenities:
+          type: array
+          items:
+            type: string
+          example: ["chef_service", "smart_tv", "lounge_area", "extra_bed_guest"]
+        nightly_rate:
+          type: number
+          format: double
+          example: 25000.00
+
+    BookRoomRequest:
+      type: object
+      required:
+        - room_id
+        - patient_id
+        - start_date
+        - end_date
+        - payment_method
+      properties:
+        room_id:
+          type: string
+          example: R101
+        patient_id:
+          type: string
+          example: P123
+        start_date:
+          type: string
+          format: date
+          example: "2026-07-01"
+        end_date:
+          type: string
+          format: date
+          example: "2026-07-07"
+        services:
+          type: array
+          items:
+            type: string
+          example: ["chef_service", "valet_parking"]
+        payment_method:
+          type: string
+          example: Corporate VIP Ledger
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          example: B789
+        room_id:
+          type: string
+          example: R101
+        patient_id:
+          type: string
+          example: P123
+        start_date:
+          type: string
+          format: date
+          example: "2026-07-01"
+        end_date:
+          type: string
+          format: date
+          example: "2026-07-07"
+        services:
+          type: array
+          items:
+            type: string
+          example: ["chef_service", "valet_parking"]
+        payment_status:
+          type: string
+          enum: [unpaid, authorized, paid, refunded]
+          example: authorized
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: RESOURCE_NOT_FOUND
+        message:
+          type: string
+          example: The requested concierge request with ID C456 was not found.
+        details:
+          type: object
+          description: Additional key-value details about the error.
+          example: { "id": "C456" }
+
+security:
+  - ApiKeyAuth: []
